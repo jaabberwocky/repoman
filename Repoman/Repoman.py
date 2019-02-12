@@ -8,9 +8,10 @@ class Repo:
 
     '''
     def __init__(self):
-        self.packages = self.__getTopDownloads()
-        self.downloaded = []
+        self.packages = set(self.__getTopDownloads())
+        self.downloaded = None
         self.repopath = None
+        self.toDownload = None
 
     # private method
     def __getTopDownloads(self, url = 'https://hugovk.github.io/top-pypi-packages/top-pypi-packages-30-days.json'):
@@ -49,11 +50,11 @@ class Repo:
         '''
         try:
             # overwrite previous packages
-            self.downloaded = []
+            self.downloaded = set()
             f = open(os.path.join(os.getcwd(), filepath), 'r')
             for line in f:
                 if len(line) > 0:
-                    self.downloaded.append(line.replace(" ", "").strip())
+                    self.downloaded.add(line.replace(" ", "").strip())
             f.close()
         except FileNotFoundError:
             raise Exception("File not found!")
@@ -71,8 +72,10 @@ class Repo:
 
     def downloadPackages(self):
         '''
-            Downloads packages using Basket to target repository path
+            Downloads packages using Basket to target repository path. Checks first for things already downloaded.
         '''
-        
+        # set exclusion 
+        self.toDownload = self.packages - self.downloaded
+        return None
         
     

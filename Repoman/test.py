@@ -22,7 +22,7 @@ class RepoTest(unittest.TestCase):
         f.close()
         self.repo.readDownloaded("test.txt")
         os.remove("test.txt")
-        self.assertEqual(self.repo.downloaded, ["test", "df"])
+        self.assertEqual(self.repo.downloaded, {"test", "df"})
     
     def testWriteDownloaded(self):
         self.repo.downloaded = ['test' , 'df']
@@ -36,6 +36,13 @@ class RepoTest(unittest.TestCase):
         os.remove("test.txt")
 
         self.assertEqual(packages, ['test','df'])
+    
+    def testDownloadPackages_exclusionRule(self):
+        # tests if exclusion rules works
+        self.repo.packages = {'test', 'df','x'}
+        self.repo.downloaded = {'test'}
+        self.repo.downloadPackages()
+        self.assertEqual(self.repo.toDownload, {'df','x'})
 
 if __name__ == "__main__":
     unittest.main()
