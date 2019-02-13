@@ -20,7 +20,19 @@ class Repo:
 
             Returns a list of packages.
         '''
-        r = requests.get(url)
+        # retry 5 times
+        # TODO: store a cache and read off that instead
+
+        ctr = 0
+        while ctr < 5:
+            if ctr == 5:
+                return [None]
+            try:
+                r = requests.get(url)
+            except:
+                print("Unable to get URL!")
+            ctr += 1
+
         if r.status_code != 200:
             raise Exception("HTTP response is not 200!")
 
@@ -74,7 +86,7 @@ class Repo:
         '''
             Downloads packages using Basket to target repository path. Checks first for things already downloaded.
         '''
-        # set exclusion 
+        # set exclusion
         self.toDownload = self.packages - self.downloaded
         return None
         
